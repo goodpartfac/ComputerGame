@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมทายปัญหาอุปกรณ์คอมพิวเตอร์ - โรงเรียนบ้านใหม่วัฒนา</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f0f4f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .game-container {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            text-align: center;
+            border: 2px solid #006400;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #006400, #008000);
+            color: white;
+            padding: 15px;
+            border-bottom: 5px solid #FFD700;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            border: 2px solid #FFD700;
+            margin-bottom: 5px;
+        }
+
+        h1 { margin: 0; font-size: 1.4rem; color: #FFD700; text-shadow: 1px 1px 2px black; }
+        h3, h4 { margin: 2px 0; font-weight: normal; font-size: 1rem; }
+
+        .content-box { padding: 20px; }
+
+        /* หน้าลงทะเบียน */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #006400;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .start-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .start-btn:hover { background-color: #218838; }
+
+        /* หน้าเกม */
+        .question-image-container {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+        .question-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .question-text { font-size: 1.2rem; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-btn {
+            background-color: #fff; border: 2px solid #006400; border-radius: 10px;
+            padding: 12px; font-size: 1rem; font-family: 'Sarabun', sans-serif;
+            cursor: pointer; transition: all 0.2s; color: #006400;
+        }
+        .option-btn:hover { background-color: #e8f5e9; transform: scale(1.02); }
+        .correct { background-color: #28a745 !important; color: white !important; border-color: #28a745 !important; }
+        .wrong { background-color: #dc3545 !important; color: white !important; border-color: #dc3545 !important; }
+
+        /* หน้าสรุปผล */
+        .score-text { font-size: 3rem; font-weight: bold; color: #006400; }
+        .restart-btn {
+            background-color: #FFD700; color: #006400; border: none;
+            padding: 12px 30px; font-size: 1.2rem; border-radius: 50px;
+            cursor: pointer; font-weight: bold; margin-top: 20px;
+        }
+
+        /* ปุ่มครูและตารางรายงาน */
+        .teacher-btn-container {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .teacher-login-btn {
+            background: none; border: none; color: #999; text-decoration: underline;
+            cursor: pointer; font-size: 0.9rem;
+        }
+        .report-table {
+            width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem;
+        }
+        .report-table th, .report-table td {
+            border: 1px solid #ddd; padding: 8px; text-align: left;
+        }
+        .report-table th { background-color: #006400; color: white; }
+        .report-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .delete-btn {
+            background-color: #dc3545; color: white; border: none; padding: 5px 10px;
+            border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-left: 5px;
+        }
+        .clear-all-btn {
+            background-color: #c82333; color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; margin-top: 15px; width: 100%;
+        }
+
+        .screen { display: none; } /* ซ่อนทุกหน้าก่อน */
+        .active { display: block; } /* แสดงหน้าที่ Active */
+
+        @media (max-width: 480px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .question-image-container { height: 180px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="header">
+            <img src="logo.png" alt="Logo" class="logo">
+            <h1>โรงเรียนบ้านใหม่วัฒนา</h1>
+            <h3>วิชาคอมพิวเตอร์</h3>
+            <h4>ผู้สอน: ครูขันทอง โพธิ์เตี้ย</h4>
+        </div>
+
+        <div id="start-screen" class="content-box screen active">
+            <h2 style="color: #006400;">ลงทะเบียนเข้าเล่น</h2>
+            <div class="input-group">
+                <label>ชื่อ-นามสกุล:</label>
+                <input type="text" id="player-name" placeholder="เช่น ด.ช.รักเรียน ขยันมาก">
+            </div>
+            <div class="input-group">
+                <label>ระดับชั้น:</label>
+                <select id="player-class">
+                    <option value="">-- เลือกระดับชั้น --</option>
+                    <option value="ป.1">ประถมศึกษาปีที่ 1</option>
+                    <option value="ป.2">ประถมศึกษาปีที่ 2</option>
+                    <option value="ป.3">ประถมศึกษาปีที่ 3</option>
+                    <option value="ป.4">ประถมศึกษาปีที่ 4</option>
+                    <option value="ป.5">ประถมศึกษาปีที่ 5</option>
+                    <option value="ป.6">ประถมศึกษาปีที่ 6</option>
+                </select>
+            </div>
+            <button onclick="startGame()" class="start-btn">เริ่มทำแบบทดสอบ</button>
+            
+            <div class="teacher-btn-container">
+                <button onclick="showTeacherLogin()" class="teacher-login-btn">สำหรับครูผู้สอน (ดูรายงาน)</button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="content-box screen">
+            <div id="question-count" style="color: #666; margin-bottom: 5px; font-size: 0.9rem;">ข้อที่ 1 / 10</div>
+            <div class="question-image-container">
+                <img id="q-img" class="question-img" src="" alt="รูปภาพประกอบโจทย์">
+            </div>
+            <div id="question" class="question-text">คำถาม...</div>
+            <div id="options" class="options-grid"></div>
+        </div>
+
+        <div id="result-screen" class="content-box screen">
+            <h2>จบเกม!</h2>
+            <p>สวัสดี <span id="show-player-name" style="color:#006400; font-weight:bold;"></span></p>
+            <p>คะแนนของคุณคือ</p>
+            <div id="final-score" class="score-text">0 / 10</div>
+            <p id="feedback-msg"></p>
+            <button onclick="location.reload()" class="restart-btn">กลับหน้าแรก</button>
+        </div>
+
+        <div id="teacher-screen" class="content-box screen" style="text-align: left;">
+            <h2 style="text-align: center; color: #006400;">รายงานคะแนนผู้เรียน</h2>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อ-สกุล</th>
+                            <th>ชั้น</th>
+                            <th>คะแนน</th>
+                            <th>เวลา</th>
+                        </tr>
+                    </thead>
+                    <tbody id="score-table-body">
+                        </tbody>
+                </table>
+            </div>
+            <button onclick="clearAllData()" class="clear-all-btn">ลบข้อมูลทั้งหมด</button>
+            <button onclick="showScreen('start-screen')" class="teacher-login-btn" style="width:100%; margin-top:10px; text-align:center;">กลับหน้าหลัก</button>
+        </div>
+    </div>
+
+    <script>
+        // --- ข้อมูลโจทย์ (ใส่ชื่อรูป q1.jpg - q10.jpg เหมือนเดิม) ---
+        const questions = [
+            { question: "อุปกรณ์ในภาพนี้คืออะไร? (เปรียบเหมือนสมอง)", image: "q1.jpg", options: ["CPU", "Mouse", "Keyboard", "Monitor"], answer: 0 },
+            { question: "อุปกรณ์ในภาพใช้ทำหน้าที่อะไร?", image: "q2.jpg", options: ["แสดงภาพ", "พิมพ์ข้อความ", "ชี้ตำแหน่ง", "ฟังเสียง"], answer: 1 },
+            { question: "จากภาพ คืออุปกรณ์ใด?", image: "q3.jpg", options: ["Scanner", "Mouse", "Printer", "Speaker"], answer: 1 },
+            { question: "อุปกรณ์นี้ทำหน้าที่อะไร?", image: "q4.jpg", options: ["ประมวลผล", "เก็บข้อมูล", "แสดงผลภาพ", "จ่ายไฟ"], answer: 2 },
+            { question: "อุปกรณ์เก็บข้อมูลนี้เรียกว่าอะไร?", image: "q5.jpg", options: ["RAM", "Hard Disk", "CPU", "Fan"], answer: 1 },
+            { question: "แผ่นวงจรสีเขียวนี้คืออะไร?", image: "q6.jpg", options: ["Mainboard", "RAM", "VGA Card", "Sound Card"], answer: 1 },
+            { question: "เครื่องนี้เรียกว่าอะไร?", image: "q7.jpg", options: ["Scanner", "Printer", "Projector", "Webcam"], answer: 1 },
+            { question: "กล่องเหล็กนี้ทำหน้าที่เล่นแผ่น DVD เรียกว่าอะไร?", image: "q8.jpg", options: ["DVD Rom", "UPS", "Case", "Power Supply"], answer: 0 },
+            { question: "USB แบบพกพา เรียกว่าอะไร?", image: "q9.jpg", options: ["CPU", "RAM", "Flash Drive", "VGA"], answer: 2 },
+            { question: "อุปกรณ์ให้เสียงนี้คืออะไร?", image: "q10.jpg", options: ["Microphone", "Headphone", "Speaker", "Monitor"], answer: 2 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let canClick = true;
+        let currentPlayer = { name: "", class: "" };
+
+        // --- ฟังก์ชันจัดการหน้าจอ ---
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // --- เริ่มเกม ---
+        function startGame() {
+            const nameInput = document.getElementById("player-name").value.trim();
+            const classInput = document.getElementById("player-class").value;
+
+            if (nameInput === "" || classInput === "") {
+                alert("กรุณากรอกชื่อและเลือกระดับชั้นก่อนเริ่มเกม");
+                return;
+            }
+
+            currentPlayer.name = nameInput;
+            currentPlayer.class = classInput;
+            
+            score = 0;
+            currentQuestion = 0;
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById("question").textContent = q.question;
+            
+            const imgEl = document.getElementById("q-img");
+            imgEl.src = q.image;
+            imgEl.onerror = () => { imgEl.style.display = 'none'; };
+            imgEl.onload = () => { imgEl.style.display = 'block'; };
+
+            document.getElementById("question-count").textContent = `ข้อที่ ${currentQuestion + 1} / ${questions.length}`;
+            
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = "";
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement("button");
+                btn.textContent = opt;
+                btn.className = "option-btn";
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsDiv.appendChild(btn);
+            });
+            canClick = true;
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (!canClick) return;
+            canClick = false;
+
+            const correctIndex = questions[currentQuestion].answer;
+            if (selectedIndex === correctIndex) {
+                score++;
+                btnElement.classList.add("correct");
+            } else {
+                btnElement.classList.add("wrong");
+                document.querySelectorAll(".option-btn")[correctIndex].classList.add("correct");
+            }
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    finishGame();
+                }
+            }, 1000);
+        }
+
+        function finishGame() {
+            saveScore(); // บันทึกคะแนน
+            showScreen('result-screen');
+            document.getElementById("show-player-name").textContent = currentPlayer.name;
+            document.getElementById("final-score").textContent = `${score} / ${questions.length}`;
+
+            let msg = "";
+            if (score === 10) msg = "สุดยอด! รู้จักอุปกรณ์ครบทุกชิ้นเลย";
+            else if (score >= 7) msg = "เก่งมาก! ทำได้ดีเยี่ยม";
+            else if (score >= 5) msg = "ผ่านเกณฑ์! ฝึกฝนอีกนิดนะ";
+            else msg = "ลองทบทวนอุปกรณ์ต่างๆ แล้วเล่นใหม่นะ";
+            document.getElementById("feedback-msg").textContent = msg;
+        }
+
+        // --- ระบบบันทึกคะแนน (LocalStorage) ---
+        function saveScore() {
+            const record = {
+                name: currentPlayer.name,
+                class: currentPlayer.class,
+                score: score,
+                total: questions.length,
+                date: new Date().toLocaleString('th-TH')
+            };
+
+            let allScores = JSON.parse(localStorage.getItem('schoolGameScores')) || [];
+            allScores.push(record);
+            localStorage.setItem('schoolGameScores', JSON.stringify(allScores));
+        }
+
+        // --- ระบบสำหรับครู ---
+        function showTeacherLogin() {
+            const password = prompt("กรุณาใส่รหัสผ่านสำหรับครู (ตั้งไว้คือ 1234):");
+            if (password === "1234") {
+                renderScoreTable();
+                showScreen('teacher-screen');
+            } else if (password !== null) {
+                alert("รหัสผ่านไม่ถูกต้อง");
+            }
+        }
+
+        function renderScoreTable() {
+            const tbody = document.getElementById("score-table-body");
+            tbody.innerHTML = "";
+            const allScores = JSON.parse(localStorage.getItem('schoolGameScores')) || [];
+
+            if (allScores.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>ยังไม่มีข้อมูลผู้เล่น</td></tr>";
+                return;
+            }
+
+            // เรียงลำดับล่าสุดขึ้นก่อน
+            allScores.reverse().forEach((data) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${data.name}</td>
+                    <td>${data.class}</td>
+                    <td style="font-weight:bold; color:#006400;">${data.score}</td>
+                    <td style="font-size:0.8rem; color:#666;">${data.date}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearAllData() {
+            if (confirm("คุณแน่ใจหรือไม่ที่จะลบข้อมูลคะแนนทั้งหมด? (กู้คืนไม่ได้)")) {
+                localStorage.removeItem('schoolGameScores');
+                renderScoreTable();
+                alert("ลบข้อมูลเรียบร้อยแล้ว");
+            }
+        }
+    </script>
+</body>
+</html>
+ 
